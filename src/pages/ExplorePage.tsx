@@ -1,15 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Filter, SlidersHorizontal, Star, ChevronDown } from 'lucide-react';
+import { Filter, SlidersHorizontal, Star, ChevronDown, Heart, ThumbsUp, Search } from 'lucide-react';
 
 export default function ExplorePage() {
   const [sortBy, setSortBy] = React.useState('popular');
   const [selectedDomain, setSelectedDomain] = React.useState('All');
   const [yearRange, setYearRange] = React.useState([1990, 2024]);
   const [minRating, setMinRating] = React.useState(0);
+  const [showPreferences, setShowPreferences] = React.useState(false);
+  const [preferences, setPreferences] = React.useState({
+    favoriteGenres: [],
+    mood: '',
+    length: 'any',
+    complexity: 'medium',
+    pace: 'medium',
+    themes: []
+  });
 
   const domains = ['All', 'Movies', 'TV Shows', 'Books', 'Anime'];
   const genres = ['Action', 'Drama', 'Comedy', 'Sci-Fi', 'Romance', 'Horror', 'Documentary'];
+  const moods = ['Happy', 'Thoughtful', 'Exciting', 'Relaxing', 'Intense'];
+  const themes = ['Adventure', 'Mystery', 'Love', 'Family', 'Technology', 'Fantasy', 'History'];
   const sortOptions = [
     { id: 'popular', name: 'Most Popular' },
     { id: 'rating', name: 'Highest Rated' },
@@ -59,6 +70,30 @@ export default function ExplorePage() {
     },
   ];
 
+  const handlePreferenceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowPreferences(false);
+    // Here you would typically make an API call to get personalized recommendations
+  };
+
+  const toggleGenre = (genre: string) => {
+    setPreferences(prev => ({
+      ...prev,
+      favoriteGenres: prev.favoriteGenres.includes(genre)
+        ? prev.favoriteGenres.filter(g => g !== genre)
+        : [...prev.favoriteGenres, genre]
+    }));
+  };
+
+  const toggleTheme = (theme: string) => {
+    setPreferences(prev => ({
+      ...prev,
+      themes: prev.themes.includes(theme)
+        ? prev.themes.filter(t => t !== theme)
+        : [...prev.themes, theme]
+    }));
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-8">
       {/* Sidebar Filters */}
@@ -68,7 +103,7 @@ export default function ExplorePage() {
         className="md:w-72 bg-white rounded-xl shadow-sm p-6"
       >
         <div className="flex items-center gap-2 mb-6">
-          <SlidersHorizontal size={20} className="text-indigo-600" />
+          <SlidersHorizontal size={20} className="text-black" />
           <h2 className="text-lg font-semibold">Filters</h2>
         </div>
 
@@ -82,7 +117,7 @@ export default function ExplorePage() {
                 onClick={() => setSelectedDomain(domain)}
                 className={`px-3 py-1 rounded-full text-sm ${
                   selectedDomain === domain
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-black text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -98,7 +133,7 @@ export default function ExplorePage() {
           <div className="space-y-2">
             {genres.map((genre) => (
               <label key={genre} className="flex items-center gap-2">
-                <input type="checkbox" className="rounded text-indigo-600" />
+                <input type="checkbox" className="rounded text-black" />
                 <span className="text-sm text-gray-600">{genre}</span>
               </label>
             ))}
@@ -115,7 +150,7 @@ export default function ExplorePage() {
               max="2024"
               value={yearRange[0]}
               onChange={(e) => setYearRange([parseInt(e.target.value), yearRange[1]])}
-              className="w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="w-24 rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
             />
             <span className="text-gray-500">to</span>
             <input
@@ -124,7 +159,7 @@ export default function ExplorePage() {
               max="2024"
               value={yearRange[1]}
               onChange={(e) => setYearRange([yearRange[0], parseInt(e.target.value)])}
-              className="w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="w-24 rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black"
             />
           </div>
         </div>
@@ -146,7 +181,7 @@ export default function ExplorePage() {
         </div>
 
         {/* Reset Filters */}
-        <button className="w-full px-4 py-2 text-sm text-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors">
+        <button className="w-full px-4 py-2 text-sm text-black border border-black rounded-lg hover:bg-gray-50 transition-colors">
           Reset Filters
         </button>
       </motion.aside>
@@ -165,15 +200,128 @@ export default function ExplorePage() {
             </p>
           </motion.div>
 
-          {/* Sort Dropdown */}
-          <div className="relative">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm">
-              <Filter size={20} />
-              <span>Sort by: {sortOptions.find(opt => opt.id === sortBy)?.name}</span>
-              <ChevronDown size={16} />
-            </button>
-          </div>
+          {/* Preference Button */}
+          <button
+            onClick={() => setShowPreferences(true)}
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors flex items-center gap-2"
+          >
+            <ThumbsUp size={20} />
+            <span>Set Your Preferences</span>
+          </button>
         </div>
+
+        {/* Preferences Modal */}
+        {showPreferences && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Your Entertainment Preferences</h2>
+                <button
+                  onClick={() => setShowPreferences(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handlePreferenceSubmit} className="space-y-6">
+                {/* Favorite Genres */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Favorite Genres</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {genres.map((genre) => (
+                      <button
+                        key={genre}
+                        type="button"
+                        onClick={() => toggleGenre(genre)}
+                        className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                          preferences.favoriteGenres.includes(genre)
+                            ? 'bg-black text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {genre}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mood */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Current Mood</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {moods.map((mood) => (
+                      <button
+                        key={mood}
+                        type="button"
+                        onClick={() => setPreferences(prev => ({ ...prev, mood }))}
+                        className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                          preferences.mood === mood
+                            ? 'bg-black text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {mood}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Length Preference */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Preferred Length</h3>
+                  <select
+                    value={preferences.length}
+                    onChange={(e) => setPreferences(prev => ({ ...prev, length: e.target.value }))}
+                    className="w-full rounded-lg border-gray-300 focus:border-black focus:ring-black"
+                  >
+                    <option value="any">Any Length</option>
+                    <option value="short">Short (less than 2 hours / less than 12 episodes)</option>
+                    <option value="medium">Medium (2-3 hours / 12-24 episodes)</option>
+                    <option value="long">Long (more than 3 hours / more than 24 episodes)</option>
+                  </select>
+                </div>
+
+                {/* Themes */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Preferred Themes</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {themes.map((theme) => (
+                      <button
+                        key={theme}
+                        type="button"
+                        onClick={() => toggleTheme(theme)}
+                        className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                          preferences.themes.includes(theme)
+                            ? 'bg-black text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {theme}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-900 transition-colors"
+                >
+                  Get Personalized Recommendations
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
 
         {/* Items Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -230,7 +378,7 @@ export default function ExplorePage() {
 
         {/* Load More */}
         <div className="mt-8 text-center">
-          <button className="px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors">
+          <button className="px-6 py-2 bg-black text-white rounded-full hover:bg-gray-900 transition-colors">
             Load More
           </button>
         </div>

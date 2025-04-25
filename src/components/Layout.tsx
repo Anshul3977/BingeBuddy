@@ -29,133 +29,135 @@ export default function Layout({ children }: LayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white text-gray-800">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
-        <nav className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-2"
-            >
-              <Link to="/" className="flex items-center space-x-2">
-                <div className="relative">
-                  <Play className="text-indigo-600" size={32} />
+    <div className="min-h-screen bg-gray-200 text-gray-800">
+      {/* Header wrapper with padding */}
+      <div className="px-4 sm:px-8 md:px-12 mx-auto sticky top-2 z-50">
+        {/* Header with original rounded-full style */}
+        <header className="bg-white/80 shadow-lg backdrop-blur-md border-b border-gray-100 rounded-full">
+          <nav className="px-4 sm:px-6">
+            <div className="flex items-center justify-between h-14">
+              {/* Logo */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center space-x-2"
+              >
+                <Link to="/" className="flex items-center space-x-2">
+                  <div className="relative">
+                    <Play className="text-black-600" size={32} />
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 180, 360],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
+                      className="absolute -top-1 -right-1"
+                    >
+                      <Sparkles className="text-black-500" size={16} />
+                    </motion.div>
+                  </div>
+                  <span className="text-2xl font-bold text-black font-inter">
+                    BingeBuddy
+                  </span>
+                </Link>
+              </motion.div>
+
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center space-x-8">
+                {navItems.map((item) => (
                   <motion.div
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                    className="absolute -top-1 -right-1"
+                    key={item.path}
+                    whileHover={{ scale: 1.05 }}
+                    className="relative group"
                   >
-                    <Sparkles className="text-purple-500" size={16} />
+                    <Link
+                      to={item.path}
+                      className={`text-gray-500 hover:text-black hover:font-bold transition-colors font-inter ${
+                        location.pathname === item.path || (item.path === '/' && location.pathname === '/') ? 'text-black font-bold' : ''
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-black transition-all ${location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
+                      }`} />
                   </motion.div>
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-                  BingeBuddy
-                </span>
-              </Link>
-            </motion.div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
-                <motion.div
-                  key={item.path}
-                  whileHover={{ scale: 1.05 }}
-                  className="relative group"
+                ))}
+                
+                {/* Notification Bell */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="relative"
                 >
-                  <Link
-                    to={item.path}
-                    className={`text-gray-600 hover:text-indigo-600 transition-colors ${
-                      location.pathname === item.path ? 'text-indigo-600' : ''
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                  <span className={`absolute -bottom-1 left-0 h-0.5 bg-indigo-600 transition-all ${
-                    location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`} />
-                </motion.div>
-              ))}
-              
-              {/* Notification Bell */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                className="relative"
-              >
-                <Bell size={20} className="text-gray-600" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
-              </motion.button>
+                  <Bell size={20} className="text-gray-600" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                </motion.button>
 
-              {/* Search Button */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-gray-600 hover:text-indigo-600"
-              >
-                <Search size={20} />
-              </motion.button>
+                {/* Search Button */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className="text-gray-600 hover:text-black-600"
+                >
+                  <Search size={20} />
+                </motion.button>
 
-              {/* Login Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full hover:opacity-90 transition-opacity flex items-center space-x-2 shadow-md"
-              >
-                <LogIn size={18} />
-                <span>Login</span>
-              </motion.button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <motion.button 
-              whileTap={{ scale: 0.95 }}
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
-          </div>
-
-          {/* Expanded Search Bar */}
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ 
-              height: isSearchOpen ? 'auto' : 0,
-              opacity: isSearchOpen ? 1 : 0
-            }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="py-4">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search for movies, shows, books, or anime..."
-                  className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:border-indigo-600 transition-colors bg-gray-50"
-                />
+                {/* Login Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-black text-white px-6 py-2 rounded-full hover:opacity-90 transition-opacity flex items-center space-x-2 shadow-md"
+                >
+                  <LogIn size={18} />
+                  <span>Login</span>
+                </motion.button>
               </div>
+
+              {/* Mobile Menu Button */}
+              <motion.button 
+                whileTap={{ scale: 0.95 }}
+                className="md:hidden"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </motion.button>
             </div>
-          </motion.div>
-        </nav>
-      </header>
+
+            {/* Expanded Search Bar */}
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ 
+                height: isSearchOpen ? 'auto' : 0,
+                opacity: isSearchOpen ? 1 : 0
+              }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="py-4">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    placeholder="Search for movies, shows, books, or anime..."
+                    className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:border-indigo-600 transition-colors bg-gray-50"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </nav>
+        </header>
+      </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white border-b"
+          className="md:hidden bg-white border-b mx-4 sm:mx-8 md:mx-12 rounded-b-lg"
         >
-          <div className="container mx-auto px-6 py-4">
+          <div className="px-4 py-4">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -189,7 +191,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Play className="text-indigo-600" size={24} />
+                <Play className="text-black" size={24} />
                 <span className="font-bold">BingeBuddy</span>
               </div>
               <p className="text-sm text-gray-500">
